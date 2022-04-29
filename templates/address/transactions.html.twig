@@ -1,0 +1,120 @@
+{% extends 'base.html.twig' %}
+
+{% set title = 'Transactions - ' ~ address|truncate_address %}
+
+{% block meta %}
+    <meta name="robots" content="noindex">
+{% endblock %}
+
+{% block content %}
+
+    <div class="text-center mb-3">
+        <a href="{{ path('app_farm_transactions', {'address': address[2:]}) }}" title="Binance Smart Chain" class="btn btn-outline-light text-dark {{ chain_context.id == 'bsc' ? 'active fw-bold' : '' }}"><img height="24px" alt="Binance Smart Chain" src="{{ asset('assets/chains/bsc.svg') }}"></a>
+        <a href="{{ path('app_farm_transactions_chain', {'chain': 'polygon', 'address': address[2:]}) }}" title="Polygon" class="btn btn-outline-light text-dark {{ chain_context.id == 'polygon' ? 'active fw-bold' : '' }}"><img height="24px" alt="Polygon" src="{{ asset('assets/chains/polygon.svg') }}"></a>
+        <a href="{{ path('app_farm_transactions_chain', {'chain': 'fantom', 'address': address[2:]}) }}" title="Fantom" class="btn btn-outline-light text-dark {{ chain_context.id == 'fantom' ? 'active fw-bold' : '' }}"><img height="24px" alt="Fantom" src="{{ asset('assets/chains/fantom.svg') }}"></a>
+        <a href="{{ path('app_farm_transactions_chain', {'chain': 'kcc', 'address': address[2:]}) }}" title="KuCoin Community Chain" class="btn btn-outline-light text-dark {{ chain_context.id == 'kcc'? 'active fw-bold' : '' }}"><img height="24px" alt="KuCoin Chain" src="{{ asset('assets/chains/kcc.png') }}"></a>
+        <a href="{{ path('app_farm_transactions_chain', {'chain': 'harmony', 'address': address[2:]}) }}" title="Harmony" class="btn btn-outline-light text-dark {{ chain_context.id == 'harmony' ? 'active fw-bold' : '' }}"><img height="24px" alt="Harmony" src="{{ asset('assets/chains/harmony.png') }}"></a>
+        <a href="{{ path('app_farm_transactions_chain', {'chain': 'celo', 'address': address[2:]}) }}" title="Celo" class="btn btn-outline-light text-dark {{ chain_context.id == 'celo' ? 'active fw-bold' : '' }}"><img height="24px" alt="Celo" src="{{ asset('assets/chains/celo.png') }}"></a>
+        <a href="{{ path('app_farm_transactions_chain', {'chain': 'moonriver', 'address': address[2:]}) }}" title="Moonriver" class="btn btn-outline-light text-dark {{ chain_context.id == 'moonriver' ? 'active fw-bold' : '' }}"><img height="24px" alt="Moonriver" src="{{ asset('assets/chains/moonriver.png') }}"></a>
+        <a href="{{ path('app_farm_transactions_chain', {'chain': 'cronos', 'address': address[2:]}) }}" title="Crypto.com: Cronos" class="btn btn-outline-light text-dark {{ chain_context.id == 'cronos' ? 'active fw-bold' : '' }}"><img height="24px" alt="Cronos" src="{{ asset('assets/chains/cronos.png') }}"></a>
+        <a href="{{ path('app_farm_transactions_chain', {'chain': 'moonbeam', 'address': address[2:]}) }}" title="Moonbeam" class="btn btn-outline-light text-dark {{ chain_context.id == 'moonbeam' ? 'active fw-bold' : '' }}"><img height="24px" alt="Moonbeam" src="{{ asset('assets/chains/moonbeam.png') }}"></a>
+    </div>
+
+    <div class="container">
+        <div class="text-center pb-3">
+            <span class="fw-bold">Transactions</span> -
+            <a class="text-muted text-small text-decoration-none">{{ address|truncate_address }}</a>
+            -
+            <a class="text-muted text-small" target="_blank" href="{{ explorer }}/address/{{ address }}"><i class="fas fa-external-link-alt"></i></a>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mb-2">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-3 text-nowrap">Transaction</div>
+                <div class="col-3 text-nowrap text-center">Amount</div>
+                <div class="col-3 text-nowrap text-center">From / To</div>
+                <div class="col-3 text-nowrap text-end">Vault</div>
+            </div>
+        </div>
+    </div>
+    {% for group in transactions %}
+        <div class="card shadow-sm mb-2">
+            <div class="card-body">
+            {% for transaction in group %}
+
+                    <div class="row">
+                        <div class="col-3 text-nowrap">
+                            {% if loop.first %}
+                            <span>{{ transaction.timestamp|date('y-m-d H:i') }}</span>
+                            <br>
+                            <a target="_blank" href="{{ explorer }}/tx/{{ transaction.hash }}" title="explorer: Transaction"><i class="fas fa-external-link-alt"></i></a> <span class="text-muted" title="{{ transaction.hash }}">{{ transaction.hash|u.truncate(8) }}...</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-3 text-center font-monospace">
+                            {% if transaction.icon|default %}
+                                <picture>
+                                    <source srcset="{{ transaction.icon|replace({'.png': '.webp'}) }}" type="image/webp">
+                                    <img loading="lazy" width="16" height="16" src="{{ transaction.icon }}" title="{{ transaction.symbol|default }}" alt="{{ transaction.symbol|default }}">
+                                </picture>
+                            {% endif %}
+                            {{ transaction.amount|abs|format_token }}
+                            {% if transaction.usd|default %}
+                                <br>
+                                <span class="text-muted">{{ transaction.usd|abs|format_currency }}</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-3 text-center font-monospace">
+                            {% if transaction.amount > 0 %}
+                                <i class="fas fa-arrow-alt-circle-left text-success"></i>
+                            {% else %}
+                                <i class="fas fa-arrow-alt-circle-right text-danger"></i>
+                            {% endif %}
+                            {% if transaction.amount > 0 %}
+                                <a target="_blank" class="text-muted text-decoration-none" href="{{ explorer }}/address/{{ transaction.from }}" title="explorer: {{ transaction.from }}">{{ transaction.from|truncate_address(6) }}</a>
+                            {% else %}
+                                <a target="_blank" class="text-muted text-decoration-none" href="{{ explorer }}/address/{{ transaction.to }}" title="explorer: {{ transaction.to }}">{{ transaction.to|truncate_address(6) }}</a>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-3">
+
+                            <div class="d-flex">
+                                <div class="flex-grow-1 align-self-end">
+                                </div>
+                                <div class="text-end">
+
+                                    <div class="d-flex">
+                                        <div class="lh-sm pe-1">
+                                            {{ transaction.vault.name|default|u.truncate(20, '...') }}
+                                            {% if transaction.provider.label|default %}
+                                                <div class="text-muted">{{ transaction.provider.label }}</div>
+                                            {% endif %}
+
+                                        </div>
+                                        <div>
+                                            {% if transaction.provider|default %}
+                                                {% if transaction.vault.link|default  %}
+                                                    <a href="{{ transaction.vault.link }}" target="_blank"><img loading="lazy" width="32" height="32" src="{{ transaction.provider.icon }}" alt=""></a>
+                                                {% else %}
+                                                    <img loading="lazy" width="36" height="36" src="{{ transaction.provider.icon }}" alt="">
+                                                {% endif %}
+
+                                            {% endif %}
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+            {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

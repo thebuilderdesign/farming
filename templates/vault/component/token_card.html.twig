@@ -1,0 +1,35 @@
+<div class="card shadow-sm mb-2">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-8">
+                <div class="d-flex">
+                    {% if item.icon|default %}
+                        <div class="pe-2">
+                            <a href="{{ path('chain_token_address', {'token': item.address, 'chain': item.chain}) }}" title="Token: {{ item.symbol|default }}">
+                                <picture style="float: left">
+                                    <source srcset="{{ item.icon }}" type="image/webp">
+                                    <img loading="lazy" src="{{ item.icon }}" title="{{ item.symbol|default }}" alt="" width="42" height="42">
+                                </picture>
+                            </a>
+                        </div>
+                    {% endif %}
+                    <div class="lh-sm">
+                        <div>
+                            <span class="fw-bold">{{ item.symbol|default|upper }}</span>
+
+                            {% if item.price|default %}
+                                <span class="text-muted font-monospace">{{ item.price|format_currency }}</span>
+                            {% endif %}
+                        </div>
+                        <span class="text-muted" style="font-size: 0.8em;">{{ item.address }}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4 text-end align-middle">
+                <a style="font-size:24px" href="{{ chain_context.explorer }}/token/{{ item.address }}" target="_blank" title="explorer: {{ item.address }}">
+                    <i class="fas fa-external-link-alt"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

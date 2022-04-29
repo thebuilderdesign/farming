@@ -1,0 +1,68 @@
+{% set box = farm %}
+
+{% apply spaceless %}
+<div class="card shadow-sm mb-2 pool-card position-relative" data-search-tags="{{ farm.name }} {{ farm.token|default }}" data-search-provider="{{ farm.provider.id }}">
+    {% include 'components/farm_badges.html.twig' with {'farm': farm} only %}
+
+    <div class="card-body">
+        <div class="row">
+            <div class="col-4">
+                <div class="d-flex">
+                    <div class="pe-2 position-relative">
+                        <div class="position-absolute top-0 start-0 translate-middle">
+                            {% if box.notes|default([])|length > 0 %} <i class="text-muted fas fa-info-circle" style="font-size: 0.8em; opacity: 0.6" title="{{ box.notes|join(' ') }}"></i>{% endif %}
+                        </div>
+
+                        <a href="{{ path('vault_address', { 'hash': box.id|md5 }) }}">
+                            <picture>
+                                <source srcset="{{ box.icon|replace({'.png': '.webp'}) }}" type="image/webp">
+                                <img loading="lazy" width="42" height="42" src="{{ box.icon }}" title="{{ box.name }}" alt="">
+                            </picture>
+                        </a>
+                    </div>
+                    <div class="text-truncate">
+                        <div class="fw-bold"><span class="d-inline-block">{{ box.name }}</span></div>
+                        <div class="text-muted">{% if box.platform|default %}{{ box.platform|capitalize }}{% endif %}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-4 text-center" style="font-size:0.9em">
+                {% if box.tvl.usd is defined and box.tvl.usd > 0 %}
+                    <div><span class="text-muted">TVL</span>&nbsp;<span>${{ box.tvl.usd|format_percent }}</span></div>
+                {% endif %}
+
+                {% if box.yield.apy is defined and box.yield.apy > 0 %}
+                    <div><span class="text-muted">APY</span>&nbsp;<span>{{ box.yield.apy|format_percent }}%</span></div>
+                {% endif %}
+
+            </div>
+
+            <div class="col-2 text-center"  style="font-size:0.9em">
+                {% if box.earns|default([])|length > 0 %}
+            {% for earn in box.earn|default([]) %}
+                <picture>
+                    <source srcset="{{ earn.icon|replace({'.png': '.webp'}) }}" type="image/webp">
+                    <img loading="lazy" width="16" height="16" src="{{ earn.icon }}" title="Earn {{ earn.symbol|default }}" alt="Earn {{ earn.symbol|default }}">
+                </picture>
+            {% endfor %}
+                    <div class="text-muted">Earn</div>
+                {% endif %}
+            </div>
+
+            <div class="col-2">
+                <div class="float-end position-relative">
+                    <a href="{{ farm.link is defined ? farm.link|default('#') : farm.provider.url|default('#') }}" target="_blank"><img width="48" height="48" alt="{{ farm.provider.label }}" title="{{ farm.provider.label }}" src="{{ farm.provider.icon }}"></a>
+
+                    {% if cross_chain|default(false) %}
+                        <div class="position-absolute top-100 start-100 translate-middle">
+                            <img width="24" height="24" loading="lazy" src="{% if chain_icon(box.chain) %}{{ asset(chain_icon(box.chain)) }}{% endif %}" alt="{{ box.chain }}">
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endapply %}

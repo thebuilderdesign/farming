@@ -1,0 +1,47 @@
+.fade-in {
+    opacity: 1;
+    animation-name: fadeInOpacity;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-in;
+    animation-duration: 0.3s;
+}
+
+@keyframes fadeInOpacity {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+html .theme-toggle .fas {
+    display: none
+}
+
+html .theme-toggle .fas.light {
+    display: inline-block;
+}
+
+html.light .light,
+html.dark .dark {
+    display: inline-block !important;
+}
+
+html.light .dark,
+html.dark .light {
+    display: none !important;
+}
+
+html.dark .btn-outline-dark {
+    color: #fff;
+    border-color: #3b3b3b;
+}
+
+html.dark .text-dark {
+    color: #fff !important;
+}
+
+.table-small-padding td {
+    padding: .125rem .125rem;
+}

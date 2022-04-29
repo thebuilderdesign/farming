@@ -1,0 +1,30 @@
+<div class="d-flex">
+    <div class="flex-grow-1">
+        <a class="btn btn-outline-dark mx-2" data-bs-toggle="modal" data-bs-target="#wallet-modal"><i class="fas fa-wallet" title="Token & Liquidity Pools"></i> Wallet</a>
+    </div>
+
+    <div class="text-end">
+        <div class="d-flex">
+            {% for key, item in summary %}
+                <div class="d-flex ps-2">
+                    <div class="lh-sm pe-1">
+                        {% if loop.last %}
+                            <div class="fw-bold">{{ item|format_currency }}</div>
+                        {% else %}
+                            {{ item|format_currency }}
+                        {% endif %}
+                        <div class="text-muted" style="font-size: 0.8em;">{{ key|capitalize }}</div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<hr>
+
+{% for platform in platforms %}
+    {% include 'address/platform/platform.html.twig' with {'platform': platform, 'address': address} only %}
+{% endfor %}
+
+{% include 'address/wallet/modal.html.twig' with {'wallet': wallet, 'address_truncate': address_truncate, 'address': address} only %}

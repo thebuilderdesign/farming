@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>{{ absolute_url(path('frontpage')) }}</loc>
+        <lastmod>{{ 'today'|date('Y-m-d') }}</lastmod>
+    </url>
+
+    <url>
+        <loc>{{ absolute_url(path('pools')) }}</loc>
+        <lastmod>{{ 'today'|date('Y-m-d') }}</lastmod>
+    </url>
+
+    <url>
+        <loc>{{ absolute_url(path('api_docu')) }}</loc>
+        <lastmod>{{ 'today'|date('Y-m-d') }}</lastmod>
+    </url>
+
+    <url>
+        <loc>{{ absolute_url(path('arrivals')) }}</loc>
+        <lastmod>{{ 'today'|date('Y-m-d') }}</lastmod>
+    </url>
+
+{% for farm in farms %}
+    <url>
+        <loc>{{ absolute_url(path('vault_address', {'hash': farm.hash})) }}</loc>
+        <lastmod>{{ farm.updatedAt|date('Y-m-d') }}</lastmod>
+    </url>
+{% endfor %}
+
+{% for token in tokens %}
+    <url>
+        <loc>{{ absolute_url(path('chain_token_address', {'token': token.token|lower, 'chain': token.chain })) }}</loc>
+        <lastmod>{{ token.updatedAt|date('Y-m-d') }}</lastmod>
+    </url>
+{% endfor %}
+
+</urlset>

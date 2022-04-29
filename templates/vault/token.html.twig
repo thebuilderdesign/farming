@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% set title = chain_context.title ~ " - Token " ~ token_card.symbol|default|upper ~ ' ' ~ token %}
+
+{% block content %}
+
+    <h2>Token - {{ token_card.symbol|default }}</h2>
+
+    {% include 'vault/component/token_card.html.twig' with {
+        'item': token_card,
+        'chain_context': chain_context,
+     } only %}
+
+    {% if chart|default %}
+        <div class="card shadow-sm mb-2">
+            <div class="card-body">
+                <canvas id="myChart" class="chart-js-token-price" height="90"
+                        data-label="{{ chart.label|json_encode }}"
+                        data-data="{{ chart.data|json_encode }}"
+                        data-title="Price: {{ token_card.symbol|default('?')|upper }}/USD"
+                ></canvas>
+            </div>
+        </div>
+    {% endif %}
+
+
+    {% if vaults|length > 0 %}
+        <h2 class="pt-3">Vaults</h2>
+
+        <p>Vaults with same token address</p>
+
+        <hr>
+
+        {% for batch in vaults|batch(2) %}
+            <div class="row">
+                {% for other in batch %}
+                    <div class="col-12 col-lg-6">
+                        {% include 'components/farms_frontpage.html.twig' with {'farm': other} only %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if same_pairs|length > 0 %}
+        <h2 class="pt-3">Other Pairs</h2>
+
+        <p>Pairs / Vaults with same token pairing</p>
+
+        <hr>
+
+        {% for same_pair in same_pairs %}
+            <div class="pb-3 pt-3">
+                {% include 'vault/component/token_card.html.twig' with {
+                    'item': same_pair.info,
+                    'chain_context': chain_context,
+                } only %}
+
+                {% for batch in same_pair.vaults|default([])|batch(2) %}
+                    <div class="row">
+                        {% for other in batch %}
+                            <div class="col-12 col-lg-6">
+                                {% include 'components/farms_frontpage.html.twig' with {'farm': other} only %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <hr>
+        {% endfor %}
+
+
+    {% endif %}
+{% endblock %}
+
+{% block javascript %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.2.1/dist/chart.min.js" integrity="sha256-uVEHWRIr846/vAdLJeybWxjPNStREzOlqLMXjW/Saeo=" crossorigin="anonymous"></script>
+{% endblock javascript %}
